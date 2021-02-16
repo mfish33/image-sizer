@@ -1,16 +1,10 @@
-'use strict';
-
-/* eslint-disable consistent-return */
-
-var str2arr      = require('../common').str2arr;
-var sliceEq      = require('../common').sliceEq;
-var readUInt32BE = require('../common').readUInt32BE;
+import { Buffer } from 'buffer';
+import { str2arr, sliceEq, readUInt32BE, ProbeResult } from '../common'
 
 
 var SIG_8BPS  = str2arr('8BPS\x00\x01');
 
-
-module.exports = function (data) {
+export default function (data:Buffer):ProbeResult | null {
   if (data.length < 6 + 16) return;
 
   // signature + version

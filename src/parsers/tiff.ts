@@ -1,28 +1,19 @@
-'use strict';
-
-/* eslint-disable consistent-return */
-
-var str2arr = require('../common').str2arr;
-var sliceEq = require('../common').sliceEq;
-var readUInt16LE = require('../common').readUInt16LE;
-var readUInt16BE = require('../common').readUInt16BE;
-var readUInt32LE = require('../common').readUInt32LE;
-var readUInt32BE = require('../common').readUInt32BE;
-
+import { Buffer } from 'buffer';
+import { str2arr, sliceEq, readUInt16LE, readUInt16BE, readUInt32LE, readUInt32BE, ProbeResult } from '../common'
 
 var SIG_1 = str2arr('II\x2A\0');
 var SIG_2 = str2arr('MM\0\x2A');
 
 
-function readUInt16(buffer, offset, is_big_endian) {
+function readUInt16(buffer:Buffer, offset:number, is_big_endian:boolean) {
   return is_big_endian ? readUInt16BE(buffer, offset) : readUInt16LE(buffer, offset);
 }
 
-function readUInt32(buffer, offset, is_big_endian) {
+function readUInt32(buffer:Buffer, offset:number, is_big_endian:boolean) {
   return is_big_endian ? readUInt32BE(buffer, offset) : readUInt32LE(buffer, offset);
 }
 
-function readIFDValue(data, data_offset, is_big_endian) {
+function readIFDValue(data:Buffer, data_offset:number, is_big_endian:boolean) {
   var type       = readUInt16(data, data_offset + 2, is_big_endian);
   var values     = readUInt32(data, data_offset + 4, is_big_endian);
 
@@ -35,7 +26,7 @@ function readIFDValue(data, data_offset, is_big_endian) {
   return readUInt32(data, data_offset + 8, is_big_endian);
 }
 
-module.exports = function (data) {
+export default function(data:Buffer):ProbeResult | null {
   if (data.length < 8) return;
 
   // check TIFF signature

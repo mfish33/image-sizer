@@ -1,17 +1,16 @@
-'use strict';
+import { Buffer } from "buffer";
+import { ProbeResult } from '../common'
 
-/* eslint-disable consistent-return */
-
-function isWhiteSpace(chr) {
+function isWhiteSpace(chr:number):boolean {
   return chr === 0x20 || chr === 0x09 || chr === 0x0D || chr === 0x0A;
 }
 
 // Filter NaN, Infinity, < 0
-function isFinitePositive(val) {
+function isFinitePositive(val:any):boolean {
   return typeof val === 'number' && isFinite(val) && val > 0;
 }
 
-function canBeSvg(buf) {
+function canBeSvg(buf:Buffer) {
   var i = 0, max = buf.length;
 
   while (i < max && isWhiteSpace(buf[i])) i++;
@@ -27,7 +26,7 @@ var SVG_HEIGHT_RE  = /\bheight="([^%]+?)"|\bheight='([^%]+?)'/;
 var SVG_VIEWBOX_RE = /\bview[bB]ox="(.+?)"|\bview[bB]ox='(.+?)'/;
 var SVG_UNITS_RE   = /in$|mm$|cm$|pt$|pc$|px$|em$|ex$/;
 
-function svgAttrs(str) {
+function svgAttrs(str:string) {
   var width   = str.match(SVG_WIDTH_RE);
   var height  = str.match(SVG_HEIGHT_RE);
   var viewbox = str.match(SVG_VIEWBOX_RE);
@@ -40,14 +39,14 @@ function svgAttrs(str) {
 }
 
 
-function units(str) {
+function units(str:string) {
   if (!SVG_UNITS_RE.test(str)) return 'px';
 
-  return str.match(SVG_UNITS_RE)[0];
+  return str.match(SVG_UNITS_RE)![0];
 }
 
 
-module.exports = function (data) {
+export default function (data:Buffer):ProbeResult | null {
   if (!canBeSvg(data)) return;
 
   var str = '';
@@ -60,9 +59,9 @@ module.exports = function (data) {
 
   if (!SVG_HEADER_RE.test(str)) return;
 
-  var attrs  = svgAttrs(str.match(SVG_HEADER_RE)[0]);
-  var width  = parseFloat(attrs.width);
-  var height = parseFloat(attrs.height);
+  var attrs  = svgAttrs(str.match(SVG_HEADER_RE)![0]);
+  var width  = parseFloat(attrs.width as string);
+  var height = parseFloat(attrs.height as string);
 
   // Extract from direct values
 

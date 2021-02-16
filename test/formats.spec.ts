@@ -1,22 +1,20 @@
-
-'use strict';
-
-
-const assert  = require('assert');
-const fs      = require('fs');
-const path    = require('path');
-const probe   = require('../');
-const str2arr = require('../lib/common').str2arr;
-const { Readable } = require('stream');
-
+import assert from 'assert'
+import { Buffer } from 'buffer'
+import fs from 'fs'
+import path from 'path'
+import probe from '../'
+import { str2arr } from '../src/common'
 
 /* eslint-disable max-len */
 describe('File formats', function () {
   describe('BMP', function () {
     it('should detect BMP', async function () {
       let file = path.join(__dirname, 'fixtures', 'iojs_logo.bmp');
-
-      let size = await probe(fs.createReadStream(file));
+      let buffer = fs.createReadStream(file)
+      let arrayBuffer = buffer.buffer.slice(
+        buffer.byteOffset, buffer.byteOffset + buffer.byteLength
+      )
+      let size = await probe();
 
       assert.deepStrictEqual(size, { width: 367, height: 187, type: 'bmp', mime: 'image/bmp', wUnits: 'px', hUnits: 'px' });
     });

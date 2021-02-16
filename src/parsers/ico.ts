@@ -1,8 +1,5 @@
-'use strict';
-
-/* eslint-disable consistent-return */
-
-var readUInt16LE = require('../common').readUInt16LE;
+import { Buffer } from 'buffer';
+import { readUInt16LE, ProbeResult } from '../common'
 
 var HEADER = 0;
 var TYPE_ICO = 1;
@@ -10,7 +7,7 @@ var INDEX_SIZE = 16;
 
 // Format specification:
 // https://en.wikipedia.org/wiki/ICO_(file_format)#Icon_resource_structure
-module.exports = function (data) {
+export default function (data:Buffer):ProbeResult | null {
   var header = readUInt16LE(data, 0);
   var type = readUInt16LE(data, 2);
   var numImages = readUInt16LE(data, 4);

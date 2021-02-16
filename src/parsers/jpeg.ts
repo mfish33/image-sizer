@@ -1,11 +1,8 @@
-'use strict';
-
-/* eslint-disable consistent-return */
-
-var readUInt16BE = require('../common').readUInt16BE;
+import { Buffer } from 'buffer';
+import { readUInt16BE, ProbeResult } from '../common'
 
 
-module.exports = function (data) {
+export default function (data:Buffer):ProbeResult | null {
   if (data.length < 2) return;
 
   // first marker of the file MUST be 0xFFD8

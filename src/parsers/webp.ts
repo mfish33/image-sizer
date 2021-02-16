@@ -1,19 +1,11 @@
-'use strict';
-
-/* eslint-disable no-bitwise */
-/* eslint-disable consistent-return */
-
-var str2arr      = require('../common').str2arr;
-var sliceEq      = require('../common').sliceEq;
-var readUInt16LE = require('../common').readUInt16LE;
-var readUInt32LE = require('../common').readUInt32LE;
-
+import { Buffer } from 'buffer';
+import { str2arr, sliceEq, readUInt16LE, readUInt32LE,ProbeResult } from '../common'
 
 var SIG_RIFF    = str2arr('RIFF');
 var SIG_WEBPVP8 = str2arr('WEBPVP8');
 
 
-function parseVP8(data) {
+function parseVP8(data:Buffer) {
   if (data.length < 16 + 14) return;
 
   if (data[16 + 7] !== 0x9D || data[16 + 8] !== 0x01 || data[16 + 9] !== 0x2A) {
@@ -32,7 +24,7 @@ function parseVP8(data) {
 }
 
 
-function parseVP8L(data) {
+function parseVP8L(data:Buffer) {
   if (data.length < 16 + 9) return;
 
   if (data[16 + 4] !== 0x2F) return;
@@ -50,7 +42,7 @@ function parseVP8L(data) {
 }
 
 
-function parseVP8X(data) {
+function parseVP8X(data:Buffer) {
   if (data.length < 16 + 14) return;
 
   return  {
@@ -66,7 +58,7 @@ function parseVP8X(data) {
 }
 
 
-module.exports = function (data) {
+export default function(data:Buffer):ProbeResult | null {
   if (data.length < 16) return;
 
   // check /^RIFF....WEBPVP8([ LX])$/ signature
