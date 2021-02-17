@@ -2,8 +2,8 @@ Image-Sizer
 ================
 
 [![CI](https://github.com/nodeca/probe-image-size/workflows/CI/badge.svg?branch=master)](https://github.com/mfish33/image-sizer/actions)
-[![NPM version](https://img.shields.io/npm/v/probe-image-size.svg?style=flat)](https://www.npmjs.org/package/image-sizer)
-[![Coverage Status](https://coveralls.io/repos/github/nodeca/probe-image-size/badge.svg?branch=master)](https://coveralls.io/github/mfish33/probe-image-size?branch=master)
+[![NPM version](https://img.shields.io/npm/v/image-sizer.svg?style=flat)](https://www.npmjs.org/package/image-sizer)
+[![Coverage Status](https://coveralls.io/repos/github/mfish33/image-sizer/badge.svg?branch=master)](https://coveralls.io/github/mfish33/image-sizer?branch=master)
 
 > Get image size from the raw image. Supported image types:
 > JPG, GIF, PNG, WebP, BMP, TIFF, SVG, PSD, ICO.

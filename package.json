@@ -27,9 +27,10 @@
     "lint": "eslint .",
     "test": "npm run lint && nyc ts-mocha -p test/tsconfig.json test/*.spec.ts",
     "coverage": "npm run test && nyc report --reporter html",
+    "report-coveralls": "nyc report --reporter lcov",
     "prebuild": "tsc build/preBuild.ts && node build/preBuild",
     "build": "tsc",
-    "prepare": "npm run test && npm run build"
+    "prepublishOnly": "npm run test && npm run build"
   },
   "mocha": {
     "timeout": 5000
