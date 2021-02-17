@@ -1,16 +1,16 @@
 import { Buffer } from 'buffer';
-import { str2arr, sliceEq, readUInt16LE, readUInt32LE,ProbeResult } from '../common'
+import { str2arr, sliceEq, readUInt16LE, readUInt32LE, ProbeResult } from '../common';
 
-var SIG_RIFF    = str2arr('RIFF');
-var SIG_WEBPVP8 = str2arr('WEBPVP8');
+const SIG_RIFF    = str2arr('RIFF');
+const SIG_WEBPVP8 = str2arr('WEBPVP8');
 
 
 function parseVP8(data:Buffer) {
-  if (data.length < 16 + 14) return;
+  if (data.length < 16 + 14) return null;
 
   if (data[16 + 7] !== 0x9D || data[16 + 8] !== 0x01 || data[16 + 9] !== 0x2A) {
     // bad code block signature
-    return;
+    return null;
   }
 
   return {
@@ -25,11 +25,11 @@ function parseVP8(data:Buffer) {
 
 
 function parseVP8L(data:Buffer) {
-  if (data.length < 16 + 9) return;
+  if (data.length < 16 + 9) return null;
 
-  if (data[16 + 4] !== 0x2F) return;
+  if (data[16 + 4] !== 0x2F) return null;
 
-  var bits = readUInt32LE(data, 16 + 5);
+  const bits = readUInt32LE(data, 16 + 5);
 
   return {
     width:  (bits & 0x3FFF) + 1,
@@ -43,7 +43,7 @@ function parseVP8L(data:Buffer) {
 
 
 function parseVP8X(data:Buffer) {
-  if (data.length < 16 + 14) return;
+  if (data.length < 16 + 14) return null;
 
   return  {
     // TODO: replace with `data.readUIntLE(8, 3) + 1`
@@ -58,8 +58,8 @@ function parseVP8X(data:Buffer) {
 }
 
 
-export default function(data:Buffer):ProbeResult | null {
-  if (data.length < 16) return;
+export default function (data:Buffer):ProbeResult | null {
+  if (data.length < 16) return null;
 
   // check /^RIFF....WEBPVP8([ LX])$/ signature
   if (sliceEq(data, 0, SIG_RIFF) && sliceEq(data, 8, SIG_WEBPVP8)) {
@@ -69,4 +69,5 @@ export default function(data:Buffer):ProbeResult | null {
       case 88/* X */: return parseVP8X(data);
     }
   }
-};
+  return null;
+}

@@ -1,18 +1,19 @@
-import { Buffer } from "buffer";
+import { Buffer } from 'buffer';
 
 interface Slice {
   [index: number]: any;
   length: number
 }
-export function sliceEq(src:Slice, start:number, dest:Slice) {
-  for (var i = start, j = 0; j < dest.length;) {
+export function sliceEq(src:Slice, start:number, dest:Slice): boolean {
+  for (let i = start, j = 0; j < dest.length;) {
     if (src[i++] !== dest[j++]) return false;
   }
   return true;
-};
+}
 
 export function str2arr(str:string, format?:string):number[] {
-  var arr = [], i = 0;
+  const arr = [];
+  let i = 0;
 
   if (format && format === 'hex') {
     while (i < str.length) {
@@ -27,29 +28,29 @@ export function str2arr(str:string, format?:string):number[] {
   }
 
   return arr;
-};
+}
 
 export function readUInt16LE(data:Buffer, offset:number):number {
   return data[offset] | (data[offset + 1] << 8);
-};
+}
 
 export function readUInt16BE(data:Buffer, offset:number):number {
   return data[offset + 1] | (data[offset] << 8);
-};
+}
 
 export function readUInt32LE(data:Buffer, offset:number):number {
   return data[offset] |
     (data[offset + 1] << 8) |
     (data[offset + 2] << 16) |
     (data[offset + 3] * 0x1000000);
-};
+}
 
 export function readUInt32BE(data:Buffer, offset:number):number {
   return data[offset + 3] |
     (data[offset + 2] << 8) |
     (data[offset + 1] << 16) |
     (data[offset] * 0x1000000);
-};
+}
 
 export interface ProbeResult {
   width: number;

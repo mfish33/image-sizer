@@ -1,14 +1,14 @@
 import { Buffer } from 'buffer';
-import { str2arr, sliceEq, readUInt32BE, ProbeResult } from '../common'
+import { str2arr, sliceEq, readUInt32BE, ProbeResult } from '../common';
 
 
-var SIG_8BPS  = str2arr('8BPS\x00\x01');
+const SIG_8BPS  = str2arr('8BPS\x00\x01');
 
 export default function (data:Buffer):ProbeResult | null {
-  if (data.length < 6 + 16) return;
+  if (data.length < 6 + 16) return null;
 
   // signature + version
-  if (!sliceEq(data, 0, SIG_8BPS)) return;
+  if (!sliceEq(data, 0, SIG_8BPS)) return null;
 
   return {
     width:  readUInt32BE(data, 6 + 12),
@@ -18,4 +18,4 @@ export default function (data:Buffer):ProbeResult | null {
     wUnits: 'px',
     hUnits: 'px'
   };
-};
+}

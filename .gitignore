@@ -4,3 +4,4 @@ coverage
 *.log
 *.swp
 dist
+build/*.js

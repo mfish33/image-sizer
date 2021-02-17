@@ -1,4 +1,4 @@
-import { Buffer } from "buffer";
+import { Buffer } from 'buffer';
 import { ProbeResult } from '../common'
 
 function isWhiteSpace(chr:number):boolean {
@@ -11,7 +11,8 @@ function isFinitePositive(val:any):boolean {
 }
 
 function canBeSvg(buf:Buffer) {
-  var i = 0, max = buf.length;
+  let i = 0;
+  const max = buf.length;
 
   while (i < max && isWhiteSpace(buf[i])) i++;
 
@@ -20,16 +21,16 @@ function canBeSvg(buf:Buffer) {
 }
 
 
-var SVG_HEADER_RE  = /<svg\s[^>]+>/;
-var SVG_WIDTH_RE   = /[^-]\bwidth="([^%]+?)"|[^-]\bwidth='([^%]+?)'/;
-var SVG_HEIGHT_RE  = /\bheight="([^%]+?)"|\bheight='([^%]+?)'/;
-var SVG_VIEWBOX_RE = /\bview[bB]ox="(.+?)"|\bview[bB]ox='(.+?)'/;
-var SVG_UNITS_RE   = /in$|mm$|cm$|pt$|pc$|px$|em$|ex$/;
+const SVG_HEADER_RE  = /<svg\s[^>]+>/;
+const SVG_WIDTH_RE   = /[^-]\bwidth="([^%]+?)"|[^-]\bwidth='([^%]+?)'/;
+const SVG_HEIGHT_RE  = /\bheight="([^%]+?)"|\bheight='([^%]+?)'/;
+const SVG_VIEWBOX_RE = /\bview[bB]ox="(.+?)"|\bview[bB]ox='(.+?)'/;
+const SVG_UNITS_RE   = /in$|mm$|cm$|pt$|pc$|px$|em$|ex$/;
 
 function svgAttrs(str:string) {
-  var width   = str.match(SVG_WIDTH_RE);
-  var height  = str.match(SVG_HEIGHT_RE);
-  var viewbox = str.match(SVG_VIEWBOX_RE);
+  const width   = str.match(SVG_WIDTH_RE);
+  const height  = str.match(SVG_HEIGHT_RE);
+  const viewbox = str.match(SVG_VIEWBOX_RE);
 
   return {
     width:   width && (width[1] || width[2]),
@@ -42,31 +43,31 @@ function svgAttrs(str:string) {
 function units(str:string) {
   if (!SVG_UNITS_RE.test(str)) return 'px';
 
-  return str.match(SVG_UNITS_RE)![0];
+  return str.match(SVG_UNITS_RE)[0];
 }
 
 
 export default function (data:Buffer):ProbeResult | null {
-  if (!canBeSvg(data)) return;
+  if (!canBeSvg(data)) return null;
 
-  var str = '';
+  let str = '';
 
-  for (var i = 0; i < data.length; i++) {
+  for (let i = 0; i < data.length; i++) {
     // 1. We can't rely on buffer features
     // 2. Don't care about UTF16 because ascii is enougth for our goals
     str += String.fromCharCode(data[i]);
   }
 
-  if (!SVG_HEADER_RE.test(str)) return;
+  if (!SVG_HEADER_RE.test(str)) return null;
 
-  var attrs  = svgAttrs(str.match(SVG_HEADER_RE)![0]);
-  var width  = parseFloat(attrs.width as string);
-  var height = parseFloat(attrs.height as string);
+  const attrs  = svgAttrs(str.match(SVG_HEADER_RE)[0]);
+  const width  = parseFloat(attrs.width);
+  const height = parseFloat(attrs.height);
 
   // Extract from direct values
 
   if (attrs.width && attrs.height) {
-    if (!isFinitePositive(width) || !isFinitePositive(height)) return;
+    if (!isFinitePositive(width) || !isFinitePositive(height)) return null;
 
     return {
       width:  width,
@@ -80,21 +81,21 @@ export default function (data:Buffer):ProbeResult | null {
 
   // Extract from viewbox
 
-  var parts = (attrs.viewbox || '').split(' ');
-  var viewbox = {
+  const parts = (attrs.viewbox || '').split(' ');
+  const viewbox = {
     width:  parts[2],
     height: parts[3]
   };
-  var vbWidth  = parseFloat(viewbox.width);
-  var vbHeight = parseFloat(viewbox.height);
+  const vbWidth  = parseFloat(viewbox.width);
+  const vbHeight = parseFloat(viewbox.height);
 
-  if (!isFinitePositive(vbWidth) || !isFinitePositive(vbHeight)) return;
-  if (units(viewbox.width) !== units(viewbox.height)) return;
+  if (!isFinitePositive(vbWidth) || !isFinitePositive(vbHeight)) return null;
+  if (units(viewbox.width) !== units(viewbox.height)) return null;
 
-  var ratio = vbWidth / vbHeight;
+  const ratio = vbWidth / vbHeight;
 
   if (attrs.width) {
-    if (!isFinitePositive(width)) return;
+    if (!isFinitePositive(width)) return null;
 
     return {
       width:  width,
@@ -107,7 +108,7 @@ export default function (data:Buffer):ProbeResult | null {
   }
 
   if (attrs.height) {
-    if (!isFinitePositive(height)) return;
+    if (!isFinitePositive(height)) return null;
 
     return {
       width:  height * ratio,
@@ -127,4 +128,4 @@ export default function (data:Buffer):ProbeResult | null {
     wUnits: units(viewbox.width),
     hUnits: units(viewbox.height)
   };
-};
+}

@@ -1,6 +1,6 @@
 {
-  "name": "probe-image-size",
-  "version": "6.0.0",
+  "name": "image-sizer",
+  "version": "1.0.2",
   "description": "Get image size without full download (JPG, GIF, PNG, WebP, BMP, TIFF, PSD)",
   "keywords": [
     "image",
@@ -16,35 +16,37 @@
     "svg",
     "psd"
   ],
-  "repository": "nodeca/probe-image-size",
+  "repository": "mfish33/image-sizer",
   "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
-    "index.js",
-    "http.js",
-    "stream.js",
-    "sync.js",
-    "lib/"
+    "dist/"
   ],
   "scripts": {
     "lint": "eslint .",
-    "test": "ts-mocha",
+    "test": "npm run lint && nyc ts-mocha -p test/tsconfig.json test/*.spec.ts",
     "coverage": "npm run test && nyc report --reporter html",
-    "report-coveralls": "nyc --reporter=lcov mocha",
-    "build": "tsc"
+    "prebuild": "tsc build/preBuild.ts && node build/preBuild",
+    "build": "tsc",
+    "prepare": "npm run test && npm run build"
   },
   "mocha": {
     "timeout": 5000
   },
   "dependencies": {
-    "buffer": "^6.0.3"
+    "buffer": "^6.0.3",
+    "typescript": "^4.1.5"
   },
   "devDependencies": {
     "@types/mocha": "^8.2.0",
     "@types/node": "^14.14.28",
-    "eslint": "^7.12.1",
+    "@typescript-eslint/eslint-plugin": "^4.15.1",
+    "@typescript-eslint/parser": "^4.15.1",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.20.0",
+    "mocha": "^8.3.0",
     "nyc": "^15.1.0",
     "ts-mocha": "^8.0.0"
-  },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts"
+  }
 }

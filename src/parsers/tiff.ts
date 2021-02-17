@@ -1,8 +1,8 @@
 import { Buffer } from 'buffer';
-import { str2arr, sliceEq, readUInt16LE, readUInt16BE, readUInt32LE, readUInt32BE, ProbeResult } from '../common'
+import { str2arr, sliceEq, readUInt16LE, readUInt16BE, readUInt32LE, readUInt32BE, ProbeResult } from '../common';
 
-var SIG_1 = str2arr('II\x2A\0');
-var SIG_2 = str2arr('MM\0\x2A');
+const SIG_1 = str2arr('II\x2A\0');
+const SIG_2 = str2arr('MM\0\x2A');
 
 
 function readUInt16(buffer:Buffer, offset:number, is_big_endian:boolean) {
@@ -14,8 +14,8 @@ function readUInt32(buffer:Buffer, offset:number, is_big_endian:boolean) {
 }
 
 function readIFDValue(data:Buffer, data_offset:number, is_big_endian:boolean) {
-  var type       = readUInt16(data, data_offset + 2, is_big_endian);
-  var values     = readUInt32(data, data_offset + 4, is_big_endian);
+  const type       = readUInt16(data, data_offset + 2, is_big_endian);
+  const values     = readUInt32(data, data_offset + 4, is_big_endian);
 
   if (values !== 1 || (type !== 3 && type !== 4)) return null;
 
@@ -26,33 +26,33 @@ function readIFDValue(data:Buffer, data_offset:number, is_big_endian:boolean) {
   return readUInt32(data, data_offset + 8, is_big_endian);
 }
 
-export default function(data:Buffer):ProbeResult | null {
-  if (data.length < 8) return;
+export default function (data:Buffer):ProbeResult | null {
+  if (data.length < 8) return null;
 
   // check TIFF signature
-  if (!sliceEq(data, 0, SIG_1) && !sliceEq(data, 0, SIG_2)) return;
+  if (!sliceEq(data, 0, SIG_1) && !sliceEq(data, 0, SIG_2)) return null;
 
-  var is_big_endian = (data[0] === 77 /* 'MM' */);
-  var count = readUInt32(data, 4, is_big_endian) - 8;
+  const is_big_endian = (data[0] === 77 /* 'MM' */);
+  const count = readUInt32(data, 4, is_big_endian) - 8;
 
-  if (count < 0) return;
+  if (count < 0) return null;
 
   // skip until IFD
-  var offset = count + 8;
+  let offset = count + 8;
 
-  if (data.length - offset < 2) return;
+  if (data.length - offset < 2) return null;
 
   // read number of IFD entries
-  var ifd_size = readUInt16(data, offset + 0, is_big_endian) * 12;
+  const ifd_size = readUInt16(data, offset + 0, is_big_endian) * 12;
 
-  if (ifd_size <= 0) return;
+  if (ifd_size <= 0) return null;
 
   offset += 2;
 
   // read all IFD entries
-  if (data.length - offset < ifd_size) return;
+  if (data.length - offset < ifd_size) return null;
 
-  var i, width, height, tag;
+  let i, width, height, tag;
 
   for (i = 0; i < ifd_size; i += 12) {
     tag = readUInt16(data, offset + i, is_big_endian);
@@ -74,4 +74,5 @@ export default function(data:Buffer):ProbeResult | null {
       hUnits: 'px'
     };
   }
-};
+  return null;
+}

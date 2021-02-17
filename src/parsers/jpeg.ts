@@ -1,22 +1,22 @@
 import { Buffer } from 'buffer';
-import { readUInt16BE, ProbeResult } from '../common'
+import { readUInt16BE, ProbeResult } from '../common';
 
 
 export default function (data:Buffer):ProbeResult | null {
-  if (data.length < 2) return;
+  if (data.length < 2) return null;
 
   // first marker of the file MUST be 0xFFD8
-  if (data[0] !== 0xFF || data[1] !== 0xD8) return;
+  if (data[0] !== 0xFF || data[1] !== 0xD8) return null;
 
-  var offset = 2;
+  let offset = 2;
 
   for (;;) {
-    if (data.length - offset < 2) return;
+    if (data.length - offset < 2) return null;
     // not a JPEG marker
-    if (data[offset++] !== 0xFF) return;
+    if (data[offset++] !== 0xFF) return null;
 
-    var code = data[offset++];
-    var length;
+    let code = data[offset++];
+    let length:number;
 
     // skip padding bytes
     while (code === 0xFF) code = data[offset++];
@@ -27,25 +27,25 @@ export default function (data:Buffer):ProbeResult | null {
       length = 0;
     } else if (0xC0 <= code && code <= 0xFE) {
       // the rest of the unreserved markers
-      if (data.length - offset < 2) return;
+      if (data.length - offset < 2) return null;
 
       length = readUInt16BE(data, offset) - 2;
       offset += 2;
     } else {
       // unknown markers
-      return;
+      return null;
     }
 
     if (code === 0xD9 /* EOI */ || code === 0xDA /* SOS */) {
       // end of the datastream
-      return;
+      return null;
     }
 
     if (length >= 5 &&
         (0xC0 <= code && code <= 0xCF) &&
         code !== 0xC4 && code !== 0xC8 && code !== 0xCC) {
 
-      if (data.length - offset < length) return;
+      if (data.length - offset < length) return null;
 
       return {
         width:  readUInt16BE(data, offset + 3),
@@ -59,4 +59,4 @@ export default function (data:Buffer):ProbeResult | null {
 
     offset += length;
   }
-};
+}

@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2020",
+    "target": "es2015",
     "declaration": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "types": [],
+    "lib": ["ES2015","ESNext.BigInt"]
   },
   "include": [
     "src/**/*"
