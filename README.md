@@ -17,7 +17,7 @@ Install
 -------
 
 ```bash
-npm install probe-image-size
+npm install image-sizer
 ```
 
 Example
