@@ -11,7 +11,7 @@ Image-Sizer
 
 Inspiration
 -------
-I wanted a library that I could take an image in the browser and calculate the natural width and height of the image without rendering it on the DOM. There are currently a few other libraries that do this but they have to be used with patch-package due to there nodejs dependencies. This library is a fork of [probe-image-size](https://github.com/nodeca/probe-image-size) but is primarily intended for browser use but is fully compatible with node. The project has been updated to typescript and the API has been simplified for the more focused purpose.
+I wanted a library that could take an image binary within the browser and calculate the natural width and height of the image without rendering it on the DOM. There are currently a few other libraries that do this but they have to be used with patch-package due to their nodejs dependencies. This library is a fork of [probe-image-size](https://github.com/nodeca/probe-image-size) but is primarily intended for browser use but maintains full compatibility with node. The project has also been updated to typescript and the API has been simplified for the more focused purpose.
 
 Install
 -------
